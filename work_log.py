@@ -57,41 +57,47 @@ class Work_log():
 
     def get_date(self):
 
-        self.clear_screen()
-        print('Date of task (DD/MM/YYYY):')
-        try:
-            date = datetime.datetime.strptime(input('> '), '%d/%m/%Y')
-        except ValueError:
-            input('That is not a valid time. Press enter to try again.')
-            self.get_date()
-        else:
-            return date.strftime('%d/%m/%Y')
+        getting_date = True
+        while getting_date:
+            self.clear_screen()
+            print('Enter date, (DD/MM/YYYY)')
+            entry_date = input('> ').strip()
+            try:
+                entry_date = datetime.datetime.strptime(entry_date, "%d/%m/%Y")
+            except ValueError:
+                input('Sorry, not a valid date. Press enter to try again.')
+            else:
+                getting_date = False
+        return entry_date.strftime("%d/%m/%Y")
 
     def get_title(self):
 
-        self.clear_screen()
-        print('Title of task:')
+        getting_title = True
+        while getting_title:
+            self.clear_screen()
+            print('Enter entry title')
+            title = input('> ').strip()
+            if not title:
+                input('Sorry, no title entered. Press enter to try again.')
+            else:
+                getting_title = False
 
-        title = input('> ')
-        if title:
-            return title
-        else:
-            input('You have not entered a title for the task. Press enter to '
-                  'try again')
-            self.get_title()
+        return title
 
     def get_time_spent(self):
 
-        self.clear_screen()
-        print('Time spent (rounded to nearest minute)')
-
-        try:
-            time_spent = int(input('> '))
-        except ValueError:
-            input('That is not a valid input. Press enter to try again.')
-            self.get_time_spent()
-        else:
-            return str(time_spent)
+        getting_time_spent = True
+        while getting_time_spent:
+            self.clear_screen()
+            print('Enter time spent (rounded to nearest minute)')
+            time_spent = input('> ').strip()
+            try:
+                time_spent = int(time_spent)
+            except ValueError:
+                input('Sorry, not a valid amount. Press enter to try again.')
+            else:
+                getting_time_spent = False
+        return str(time_spent)
 
     def get_notes(self):
 
@@ -170,11 +176,17 @@ class Work_log():
             input('Press enter to return to the search menu.')
             self.search_entries()
 
+        # keys to matches are stored in a list to allow matches to allow user
+        #  to view the next or previous match
         index = []
         for i in matches.keys():
             index.append(i)
-
         count = 0
+
+        options = {'n': '[N]ext, ', 'e': '[E]dit, ',
+                   'p': '[P]revious ', 'd': '[D]elete, ',
+                   'enter': '[enter] to return to search menu'}
+
         while True:
             self.clear_screen()
             print('Date : {}'.format(matches[index[count]][0]))
@@ -183,18 +195,13 @@ class Work_log():
             print('Notes : {}'.format(matches[index[count]][3]))
             print('Result {} of {}'.format(count+1, len(index)))
             if count == 0:
-                print('[N]ext, [E]dit, [D]elete, '
-                      '[enter] to return to search menu')
+                print('{n}{e}{d}{enter}'.format(**options))
                 search_result_options = 'ned'
-            if count >= 1 and count < len(index)-1:
-                print('[N]ext, [P]revious [E]dit, [D]elete, '
-                      '[enter] to return to search menu')
+            elif count >= 1 and count < len(index) - 1:
+                print('{n}{p}{e}{d}{enter}'.format(**options))
                 search_result_options = 'nped'
-
-            if count == len(index)-1:
-                print('[P]revious [E]dit, [D]elete, [enter] to return to '
-                      'search '
-                      'menu')
+            else:
+                print('{p}{e}{d}{enter}'.format(**options))
                 search_result_options = 'ped'
 
             while True:
@@ -222,12 +229,14 @@ class Work_log():
         entry = list(self.get_entry_details())
         e.edit_file('edit', line_num, entry)
         input('Edit made. Press enter to return to search menu')
+        self.search_entries()
 
     def delete_entry(self, line_num, match):
 
         input('Press any key to delete entry.')
         e.edit_file('delete', line_num, match)
         input('Entry deleted. Press enter to return to search menu')
+        self.search_entries()
 
     def quit_program(self):
 
@@ -243,6 +252,7 @@ class Work_log():
 def main():
     w = Work_log()
     w.display_main_menu()
+
 
 if __name__ == '__main__':
     main()

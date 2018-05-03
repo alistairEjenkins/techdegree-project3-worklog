@@ -28,6 +28,7 @@ class Entry():
             csv_writer.writerow(args)
 
     def search_by_date(self, date):
+
         matches = {}
         with open(self.FILE, 'r') as csvfile:
             csv_reader = csv.reader(csvfile, delimiter=' ',
