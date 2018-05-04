@@ -22,7 +22,7 @@ class Entry():
     def add_entry_to_file(self, *args):
         # entries are added to .csv file line by line
 
-        with open(self.FILE, 'a') as csvfile:
+        with open(self.FILE, 'a', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=' ',
                                     lineterminator='\n')
             csv_writer.writerow(args)

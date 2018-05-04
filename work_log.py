@@ -194,7 +194,10 @@ class Work_log():
             print('Time Spent : {}'.format(matches[index[count]][2]))
             print('Notes : {}'.format(matches[index[count]][3]))
             print('Result {} of {}'.format(count+1, len(index)))
-            if count == 0:
+            if len(index) == 1:
+                print('{e}{d}{enter}'.format(**options))
+                search_result_options = 'ed'
+            elif count == 0:
                 print('{n}{e}{d}{enter}'.format(**options))
                 search_result_options = 'ned'
             elif count >= 1 and count < len(index) - 1:
